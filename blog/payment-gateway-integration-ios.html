@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Gateway Integration in iOS: A Practical Guide - Vishal Gandhi</title>
+  <meta name="description" content="Lessons learned from integrating multiple payment gateways (HyperPay, STC Pay, Tabby, Tamara) in a large-scale iOS delivery app.">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .blog-post { padding: 120px 0 96px; }
+    .blog-post-header { margin-bottom: 48px; }
+    .blog-post-date { font-size: 0.85rem; color: var(--color-text-light); font-weight: 500; margin-bottom: 12px; }
+    .blog-post-header h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.2; margin-bottom: 16px; }
+    .blog-post-subtitle { font-size: 1.15rem; color: var(--color-text-light); line-height: 1.7; }
+    .blog-post-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+    .blog-post-body { max-width: 720px; }
+    .blog-post-body h2 { font-size: 1.5rem; font-weight: 700; margin: 48px 0 16px; }
+    .blog-post-body h3 { font-size: 1.2rem; font-weight: 700; margin: 32px 0 12px; }
+    .blog-post-body p { font-size: 1.05rem; color: var(--color-text-light); line-height: 1.8; margin-bottom: 16px; }
+    .blog-post-body ul, .blog-post-body ol { padding-left: 24px; margin-bottom: 16px; }
+    .blog-post-body li { font-size: 1.05rem; color: var(--color-text-light); line-height: 1.8; margin-bottom: 8px; }
+    .blog-post-body code { font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; font-size: 0.9em; background: var(--color-bg-alt); border: 1px solid var(--color-border); padding: 2px 6px; border-radius: 4px; }
+    .blog-post-body pre { background: #1e293b; color: #e2e8f0; border-radius: 12px; padding: 24px; overflow-x: auto; margin-bottom: 24px; line-height: 1.6; }
+    .blog-post-body pre code { background: none; border: none; padding: 0; color: inherit; font-size: 0.9rem; }
+    .blog-post-body blockquote { border-left: 3px solid var(--color-primary); padding: 16px 24px; margin: 24px 0; background: var(--color-bg-alt); border-radius: 0 8px 8px 0; }
+    .blog-post-body blockquote p { margin-bottom: 0; font-style: italic; }
+    .blog-post-body strong { color: var(--color-text); font-weight: 600; }
+    .blog-post-nav { margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--color-border); }
+    .blog-post-nav a { display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem; font-weight: 600; color: var(--color-primary); transition: gap 0.2s ease; }
+    .blog-post-nav a:hover { gap: 12px; }
+    .keyword { color: #c084fc; } .type { color: #67e8f9; } .string { color: #86efac; } .comment { color: #64748b; } .func { color: #fbbf24; }
+    @media (max-width: 768px) { .blog-post-header h1 { font-size: 1.75rem; } .blog-post { padding: 100px 0 64px; } }
+  </style>
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo">VG</a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#skills">Skills</a></li>
+        <li><a href="../index.html#experience">Experience</a></li>
+        <li><a href="../index.html#projects">Projects</a></li>
+        <li><a href="../index.html#contact">Contact</a></li>
+        <li><a href="../blog.html" class="nav-blog-link active">Blog</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <article class="blog-post">
+    <div class="container">
+      <header class="blog-post-header">
+        <p class="blog-post-date">February 15, 2026</p>
+        <h1>Payment Gateway Integration in iOS: A Practical Guide</h1>
+        <p class="blog-post-subtitle">Lessons from integrating HyperPay, STC Pay, Tabby, and Tamara into a delivery platform, and the architecture that made it manageable.</p>
+        <div class="blog-post-tags">
+          <span class="tag">iOS</span>
+          <span class="tag">Payments</span>
+          <span class="tag">Swift</span>
+          <span class="tag">Architecture</span>
+        </div>
+      </header>
+
+      <div class="blog-post-body">
+        <h2>The Payment Landscape in the Middle East</h2>
+        <p>Building a delivery app for the Saudi Arabian market means supporting a diverse range of payment methods. Unlike markets where Apple Pay and credit cards dominate, our users expect options like STC Pay (a mobile wallet tied to phone numbers), Tabby and Tamara (buy-now-pay-later services), alongside traditional card payments through HyperPay.</p>
+
+        <p>Each payment provider has its own SDK, its own flow, and its own set of quirks. The challenge isn't just integrating one gateway - it's building an architecture that can support multiple gateways without turning your checkout into spaghetti code.</p>
+
+        <h2>Designing the Payment Architecture</h2>
+        <p>The key insight was to create an abstraction layer that treats all payment methods uniformly from the checkout flow's perspective, while allowing each provider to handle its specific implementation details internally.</p>
+
+<pre><code><span class="comment">// Unified payment protocol - the checkout doesn't need to know</span>
+<span class="comment">// which provider is being used</span>
+<span class="keyword">protocol</span> <span class="type">PaymentGateway</span> {
+    <span class="keyword">var</span> name: <span class="type">String</span> { <span class="keyword">get</span> }
+    <span class="keyword">var</span> supportedMethods: [<span class="type">PaymentMethod</span>] { <span class="keyword">get</span> }
+
+    <span class="keyword">func</span> <span class="func">initiatePayment</span>(
+        amount: <span class="type">Decimal</span>,
+        currency: <span class="type">Currency</span>,
+        orderId: <span class="type">String</span>
+    ) <span class="keyword">async throws</span> -> <span class="type">PaymentSession</span>
+
+    <span class="keyword">func</span> <span class="func">processPayment</span>(
+        session: <span class="type">PaymentSession</span>,
+        from viewController: <span class="type">UIViewController</span>
+    ) <span class="keyword">async throws</span> -> <span class="type">PaymentResult</span>
+
+    <span class="keyword">func</span> <span class="func">verifyPayment</span>(transactionId: <span class="type">String</span>) <span class="keyword">async throws</span> -> <span class="type">PaymentStatus</span>
+}
+
+<span class="comment">// Unified result type</span>
+<span class="keyword">enum</span> <span class="type">PaymentResult</span> {
+    <span class="keyword">case</span> success(transactionId: <span class="type">String</span>)
+    <span class="keyword">case</span> pending(checkoutId: <span class="type">String</span>)
+    <span class="keyword">case</span> cancelled
+    <span class="keyword">case</span> failed(<span class="type">PaymentError</span>)
+}
+
+<span class="keyword">enum</span> <span class="type">PaymentError</span>: <span class="type">Error</span> {
+    <span class="keyword">case</span> insufficientFunds
+    <span class="keyword">case</span> cardDeclined
+    <span class="keyword">case</span> networkError
+    <span class="keyword">case</span> providerError(code: <span class="type">String</span>, message: <span class="type">String</span>)
+    <span class="keyword">case</span> userCancelled
+}</code></pre>
+
+        <h3>The Payment Manager</h3>
+        <p>A central <code>PaymentManager</code> acts as a coordinator. It selects the appropriate gateway based on the user's chosen payment method and handles the flow uniformly.</p>
+
+<pre><code><span class="keyword">final class</span> <span class="type">PaymentManager</span> {
+    <span class="keyword">private var</span> gateways: [<span class="type">PaymentMethod</span>: <span class="type">PaymentGateway</span>] = [:]
+
+    <span class="keyword">func</span> <span class="func">register</span>(_ gateway: <span class="type">PaymentGateway</span>) {
+        <span class="keyword">for</span> method <span class="keyword">in</span> gateway.supportedMethods {
+            gateways[method] = gateway
+        }
+    }
+
+    <span class="keyword">func</span> <span class="func">processPayment</span>(
+        method: <span class="type">PaymentMethod</span>,
+        amount: <span class="type">Decimal</span>,
+        currency: <span class="type">Currency</span>,
+        orderId: <span class="type">String</span>,
+        from viewController: <span class="type">UIViewController</span>
+    ) <span class="keyword">async throws</span> -> <span class="type">PaymentResult</span> {
+        <span class="keyword">guard let</span> gateway = gateways[method] <span class="keyword">else</span> {
+            <span class="keyword">throw</span> <span class="type">PaymentError</span>.<span class="func">providerError</span>(
+                code: <span class="string">"UNSUPPORTED"</span>,
+                message: <span class="string">"Payment method not available"</span>
+            )
+        }
+
+        <span class="keyword">let</span> session = <span class="keyword">try await</span> gateway.<span class="func">initiatePayment</span>(
+            amount: amount, currency: currency, orderId: orderId
+        )
+        <span class="keyword">return try await</span> gateway.<span class="func">processPayment</span>(
+            session: session, from: viewController
+        )
+    }
+}</code></pre>
+
+        <h2>Provider-Specific Implementations</h2>
+
+        <h3>HyperPay (Card Payments)</h3>
+        <p>HyperPay handles traditional card payments and is our primary gateway. Their SDK presents a card input form and handles 3D Secure verification. The tricky part is their checkout flow requires a WebView-based redirect for 3DS, which means handling the callback URL correctly.</p>
+
+<pre><code><span class="keyword">final class</span> <span class="type">HyperPayGateway</span>: <span class="type">PaymentGateway</span> {
+    <span class="keyword">let</span> name = <span class="string">"HyperPay"</span>
+    <span class="keyword">let</span> supportedMethods: [<span class="type">PaymentMethod</span>] = [.visa, .mastercard, .mada]
+
+    <span class="keyword">func</span> <span class="func">processPayment</span>(
+        session: <span class="type">PaymentSession</span>,
+        from viewController: <span class="type">UIViewController</span>
+    ) <span class="keyword">async throws</span> -> <span class="type">PaymentResult</span> {
+        <span class="keyword">return try await withCheckedThrowingContinuation</span> { continuation <span class="keyword">in</span>
+            <span class="keyword">let</span> checkoutSettings = <span class="type">OPPCheckoutSettings</span>()
+            checkoutSettings.paymentBrands = [<span class="string">"VISA"</span>, <span class="string">"MASTER"</span>, <span class="string">"MADA"</span>]
+            checkoutSettings.shopperResultURL = <span class="string">"com.app.payments://result"</span>
+
+            <span class="keyword">let</span> checkout = <span class="type">OPPCheckoutProvider</span>(
+                paymentProvider: provider,
+                checkoutID: session.checkoutId,
+                settings: checkoutSettings
+            )
+
+            checkout?.<span class="func">presentCheckout</span>(
+                forSubmittingTransactionCompletionHandler: { transaction, error <span class="keyword">in</span>
+                    <span class="keyword">if let</span> error {
+                        continuation.<span class="func">resume</span>(throwing: error)
+                    } <span class="keyword">else if let</span> transaction {
+                        continuation.<span class="func">resume</span>(returning: .success(
+                            transactionId: transaction.resourcePath ?? <span class="string">""</span>
+                        ))
+                    }
+                },
+                cancelHandler: {
+                    continuation.<span class="func">resume</span>(returning: .cancelled)
+                }
+            )
+        }
+    }
+}</code></pre>
+
+        <h3>STC Pay</h3>
+        <p>STC Pay uses a phone number-based OTP flow. The user enters their phone number, receives an OTP, and confirms the payment. This flow needs careful UX consideration since it involves navigating between your app and potentially the STC Pay app.</p>
+
+        <h3>Buy-Now-Pay-Later (Tabby & Tamara)</h3>
+        <p>BNPL providers like Tabby and Tamara have become extremely popular in the region. Their integration is typically WebView-based - you redirect the user to their checkout page, they approve the installment plan, and you receive a callback.</p>
+
+        <p>The key challenge is handling the redirect flow reliably. Users might background the app, the WebView might lose state, or the network might drop mid-transaction. Robust state management is essential.</p>
+
+        <h2>Error Handling and Recovery</h2>
+        <p>Payment failures are inevitable. Network issues, insufficient funds, expired cards - the question is how gracefully you handle them. We built a structured error handling system that provides clear, actionable messages to users.</p>
+
+<pre><code><span class="keyword">extension</span> <span class="type">PaymentError</span> {
+    <span class="keyword">var</span> userMessage: <span class="type">String</span> {
+        <span class="keyword">switch self</span> {
+        <span class="keyword">case</span> .insufficientFunds:
+            <span class="keyword">return</span> <span class="string">"Insufficient funds. Please try a different payment method."</span>
+        <span class="keyword">case</span> .cardDeclined:
+            <span class="keyword">return</span> <span class="string">"Your card was declined. Please check your card details or contact your bank."</span>
+        <span class="keyword">case</span> .networkError:
+            <span class="keyword">return</span> <span class="string">"Connection issue. Please check your internet and try again."</span>
+        <span class="keyword">case</span> .providerError(_, <span class="keyword">let</span> message):
+            <span class="keyword">return</span> message
+        <span class="keyword">case</span> .userCancelled:
+            <span class="keyword">return</span> <span class="string">"Payment was cancelled."</span>
+        }
+    }
+
+    <span class="keyword">var</span> isRetryable: <span class="type">Bool</span> {
+        <span class="keyword">switch self</span> {
+        <span class="keyword">case</span> .networkError: <span class="keyword">return true</span>
+        <span class="keyword">case</span> .providerError: <span class="keyword">return true</span>
+        <span class="keyword">default</span>: <span class="keyword">return false</span>
+        }
+    }
+}</code></pre>
+
+        <h2>Security Considerations</h2>
+        <p>Handling payments means handling sensitive data. Here are the non-negotiable security practices we follow:</p>
+        <ul>
+          <li><strong>Never store card details locally.</strong> Always use the provider's tokenization. The raw card number should never touch your servers or device storage.</li>
+          <li><strong>Certificate pinning</strong> for all payment-related API calls to prevent man-in-the-middle attacks.</li>
+          <li><strong>Jailbreak detection</strong> before initiating any payment flow. Compromised devices pose a security risk.</li>
+          <li><strong>Server-side verification</strong> for every transaction. Never trust the client-side callback alone - always verify the payment status with the provider's server.</li>
+          <li><strong>PCI DSS compliance</strong> - ensure your architecture keeps you out of PCI scope by using the provider's hosted UI for card input.</li>
+        </ul>
+
+        <h2>Testing Payments</h2>
+        <p>Every provider offers a sandbox environment, but the real challenge is simulating edge cases: timeouts, partial payments, 3DS failures, and network drops mid-transaction. We built a mock payment gateway that conforms to our <code>PaymentGateway</code> protocol and can simulate any scenario.</p>
+
+        <blockquote>
+          <p>The best payment integration is one the user barely notices. It should feel effortless, but behind the scenes, it handles every edge case gracefully.</p>
+        </blockquote>
+
+        <h2>Key Takeaways</h2>
+        <ol>
+          <li><strong>Abstract early.</strong> Build a unified payment protocol before integrating your first gateway. Adding subsequent providers becomes much easier.</li>
+          <li><strong>Handle every edge case.</strong> Users will background the app, lose network, and do unexpected things during payment. Plan for all of it.</li>
+          <li><strong>Never trust the client.</strong> Always verify payment status server-side before confirming an order.</li>
+          <li><strong>Provide clear error messages.</strong> When a payment fails, the user needs to know why and what they can do about it.</li>
+          <li><strong>Test with real devices.</strong> Payment SDKs often behave differently in simulators. Always test the complete flow on physical devices.</li>
+        </ol>
+
+        <div class="blog-post-nav">
+          <a href="../blog.html">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to all posts
+          </a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Vishal Gandhi. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 10); });
+    const navToggle = document.getElementById('nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+    navToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+      const spans = navToggle.querySelectorAll('span');
+      if (navLinks.classList.contains('open')) { spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)'; spans[1].style.opacity = '0'; spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)'; }
+      else { spans[0].style.transform = ''; spans[1].style.opacity = ''; spans[2].style.transform = ''; }
+    });
+    navLinks.querySelectorAll('a').forEach(link => { link.addEventListener('click', () => { navLinks.classList.remove('open'); const spans = navToggle.querySelectorAll('span'); spans[0].style.transform = ''; spans[1].style.opacity = ''; spans[2].style.transform = ''; }); });
+  </script>
+</body>
+</html>

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Migrating from MVP to MVVM + Clean Architecture in iOS - Vishal Gandhi</title>
+  <meta name="description" content="A practical guide to migrating a large-scale iOS app from MVP to MVVM with Clean Architecture, based on real-world experience with a 10M+ download app.">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .blog-post {
+      padding: 120px 0 96px;
+    }
+    .blog-post-header {
+      margin-bottom: 48px;
+    }
+    .blog-post-date {
+      font-size: 0.85rem;
+      color: var(--color-text-light);
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    .blog-post-header h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .blog-post-subtitle {
+      font-size: 1.15rem;
+      color: var(--color-text-light);
+      line-height: 1.7;
+    }
+    .blog-post-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+    }
+    .blog-post-body {
+      max-width: 720px;
+    }
+    .blog-post-body h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 48px 0 16px;
+    }
+    .blog-post-body h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 32px 0 12px;
+    }
+    .blog-post-body p {
+      font-size: 1.05rem;
+      color: var(--color-text-light);
+      line-height: 1.8;
+      margin-bottom: 16px;
+    }
+    .blog-post-body ul, .blog-post-body ol {
+      padding-left: 24px;
+      margin-bottom: 16px;
+    }
+    .blog-post-body li {
+      font-size: 1.05rem;
+      color: var(--color-text-light);
+      line-height: 1.8;
+      margin-bottom: 8px;
+    }
+    .blog-post-body code {
+      font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+      font-size: 0.9em;
+      background: var(--color-bg-alt);
+      border: 1px solid var(--color-border);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .blog-post-body pre {
+      background: #1e293b;
+      color: #e2e8f0;
+      border-radius: 12px;
+      padding: 24px;
+      overflow-x: auto;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+    .blog-post-body pre code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: inherit;
+      font-size: 0.9rem;
+    }
+    .blog-post-body blockquote {
+      border-left: 3px solid var(--color-primary);
+      padding: 16px 24px;
+      margin: 24px 0;
+      background: var(--color-bg-alt);
+      border-radius: 0 8px 8px 0;
+    }
+    .blog-post-body blockquote p {
+      margin-bottom: 0;
+      font-style: italic;
+    }
+    .blog-post-body strong {
+      color: var(--color-text);
+      font-weight: 600;
+    }
+    .blog-post-nav {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid var(--color-border);
+    }
+    .blog-post-nav a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--color-primary);
+      transition: gap 0.2s ease;
+    }
+    .blog-post-nav a:hover {
+      gap: 12px;
+    }
+    .keyword {
+      color: #c084fc;
+    }
+    .type {
+      color: #67e8f9;
+    }
+    .string {
+      color: #86efac;
+    }
+    .comment {
+      color: #64748b;
+    }
+    .func {
+      color: #fbbf24;
+    }
+    @media (max-width: 768px) {
+      .blog-post-header h1 { font-size: 1.75rem; }
+      .blog-post { padding: 100px 0 64px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo">VG</a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#skills">Skills</a></li>
+        <li><a href="../index.html#experience">Experience</a></li>
+        <li><a href="../index.html#projects">Projects</a></li>
+        <li><a href="../index.html#contact">Contact</a></li>
+        <li><a href="../blog.html" class="nav-blog-link active">Blog</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Blog Post -->
+  <article class="blog-post">
+    <div class="container">
+      <header class="blog-post-header">
+        <p class="blog-post-date">March 8, 2026</p>
+        <h1>Migrating from MVP to MVVM + Clean Architecture in iOS</h1>
+        <p class="blog-post-subtitle">A practical guide based on migrating a large-scale delivery app with 10M+ downloads, covering the why, the how, and the lessons learned along the way.</p>
+        <div class="blog-post-tags">
+          <span class="tag">Swift</span>
+          <span class="tag">MVVM</span>
+          <span class="tag">Clean Architecture</span>
+          <span class="tag">iOS</span>
+        </div>
+      </header>
+
+      <div class="blog-post-body">
+        <h2>Why We Needed to Migrate</h2>
+        <p>When you're working on an app that has grown over several years to serve millions of users, architectural debt becomes impossible to ignore. Our codebase had started with MVP (Model-View-Presenter), which served us well in the early days. But as the team grew to 15+ engineers and features became more complex, we started hitting walls.</p>
+
+        <p>The problems were clear:</p>
+        <ul>
+          <li><strong>Massive Presenters</strong> - Some presenters had grown to thousands of lines, handling everything from business logic to navigation.</li>
+          <li><strong>Tight Coupling</strong> - Views were directly dependent on concrete implementations, making unit testing nearly impossible.</li>
+          <li><strong>Merge Conflicts</strong> - Multiple engineers working on the same module meant constant conflicts in monolithic files.</li>
+          <li><strong>Slow Onboarding</strong> - New team members struggled to understand where logic lived and how data flowed through the app.</li>
+        </ul>
+
+        <h2>The Target Architecture</h2>
+        <p>We chose MVVM combined with Clean Architecture principles and Dependency Injection. Here's why this combination works well for large-scale iOS apps:</p>
+
+        <h3>Layer Separation</h3>
+        <p>Clean Architecture gives us clear boundaries between layers. Each layer has a single responsibility and communicates through well-defined protocols.</p>
+
+<pre><code><span class="comment">// Domain Layer - Pure business logic, no framework dependencies</span>
+<span class="keyword">protocol</span> <span class="type">FetchOrdersUseCase</span> {
+    <span class="keyword">func</span> <span class="func">execute</span>(userId: <span class="type">String</span>) <span class="keyword">async throws</span> -> [<span class="type">Order</span>]
+}
+
+<span class="comment">// Data Layer - Repository implementation</span>
+<span class="keyword">final class</span> <span class="type">OrderRepositoryImpl</span>: <span class="type">OrderRepository</span> {
+    <span class="keyword">private let</span> remoteDataSource: <span class="type">OrderRemoteDataSource</span>
+    <span class="keyword">private let</span> localDataSource: <span class="type">OrderLocalDataSource</span>
+
+    <span class="keyword">func</span> <span class="func">getOrders</span>(userId: <span class="type">String</span>) <span class="keyword">async throws</span> -> [<span class="type">Order</span>] {
+        <span class="keyword">do</span> {
+            <span class="keyword">let</span> orders = <span class="keyword">try await</span> remoteDataSource.<span class="func">fetchOrders</span>(userId: userId)
+            <span class="keyword">try await</span> localDataSource.<span class="func">cache</span>(orders)
+            <span class="keyword">return</span> orders
+        } <span class="keyword">catch</span> {
+            <span class="keyword">return try await</span> localDataSource.<span class="func">getCachedOrders</span>(userId: userId)
+        }
+    }
+}
+
+<span class="comment">// Presentation Layer - ViewModel</span>
+<span class="keyword">final class</span> <span class="type">OrderListViewModel</span>: <span class="type">ObservableObject</span> {
+    <span class="keyword">@Published var</span> orders: [<span class="type">OrderViewData</span>] = []
+    <span class="keyword">@Published var</span> isLoading = <span class="keyword">false</span>
+    <span class="keyword">@Published var</span> error: <span class="type">String</span>?
+
+    <span class="keyword">private let</span> fetchOrdersUseCase: <span class="type">FetchOrdersUseCase</span>
+
+    <span class="keyword">func</span> <span class="func">loadOrders</span>() <span class="keyword">async</span> {
+        isLoading = <span class="keyword">true</span>
+        <span class="keyword">do</span> {
+            <span class="keyword">let</span> result = <span class="keyword">try await</span> fetchOrdersUseCase.<span class="func">execute</span>(userId: currentUserId)
+            orders = result.<span class="func">map</span> { <span class="type">OrderViewData</span>(from: $0) }
+        } <span class="keyword">catch</span> {
+            <span class="keyword">self</span>.error = error.localizedDescription
+        }
+        isLoading = <span class="keyword">false</span>
+    }
+}</code></pre>
+
+        <h3>Dependency Injection</h3>
+        <p>DI was the key enabler for the entire migration. By injecting dependencies through protocols, we could swap out implementations without touching the consuming code. This made it possible to migrate module by module rather than doing a risky big-bang rewrite.</p>
+
+<pre><code><span class="comment">// Protocol-based dependency definition</span>
+<span class="keyword">protocol</span> <span class="type">OrderRepository</span> {
+    <span class="keyword">func</span> <span class="func">getOrders</span>(userId: <span class="type">String</span>) <span class="keyword">async throws</span> -> [<span class="type">Order</span>]
+    <span class="keyword">func</span> <span class="func">getOrderDetail</span>(id: <span class="type">String</span>) <span class="keyword">async throws</span> -> <span class="type">OrderDetail</span>
+}
+
+<span class="comment">// DI Container registration</span>
+<span class="keyword">extension</span> <span class="type">DependencyContainer</span> {
+    <span class="keyword">func</span> <span class="func">registerOrderDependencies</span>() {
+        register(<span class="type">OrderRepository</span>.<span class="keyword">self</span>) {
+            <span class="type">OrderRepositoryImpl</span>(
+                remoteDataSource: <span class="keyword">self</span>.<span class="func">resolve</span>(),
+                localDataSource: <span class="keyword">self</span>.<span class="func">resolve</span>()
+            )
+        }
+        register(<span class="type">FetchOrdersUseCase</span>.<span class="keyword">self</span>) {
+            <span class="type">FetchOrdersUseCaseImpl</span>(repository: <span class="keyword">self</span>.<span class="func">resolve</span>())
+        }
+    }
+}</code></pre>
+
+        <h2>The Migration Strategy</h2>
+        <p>Rewriting everything at once was not an option. We had 100K+ daily active users and couldn't afford downtime or regressions. Here's the approach that worked for us:</p>
+
+        <h3>1. Start with New Features</h3>
+        <p>Every new feature was built using the new architecture from day one. This gave the team hands-on practice with the patterns without the risk of breaking existing functionality.</p>
+
+        <h3>2. Extract Shared Logic First</h3>
+        <p>We identified common patterns across modules - networking, caching, error handling - and built clean abstractions for these first. This created a foundation that the rest of the migration could build on.</p>
+
+        <h3>3. Migrate Module by Module</h3>
+        <p>We prioritized modules based on two factors: how frequently they changed (high-churn modules benefited most from better architecture) and how critical they were to the user experience.</p>
+
+        <h3>4. Write Tests as You Go</h3>
+        <p>Each migrated module came with unit tests for the ViewModel and Use Case layers. Since dependencies were injected through protocols, writing mock implementations for testing was straightforward.</p>
+
+<pre><code><span class="comment">// Testing becomes simple with protocol-based DI</span>
+<span class="keyword">final class</span> <span class="type">MockOrderRepository</span>: <span class="type">OrderRepository</span> {
+    <span class="keyword">var</span> stubbedOrders: [<span class="type">Order</span>] = []
+    <span class="keyword">var</span> shouldThrowError = <span class="keyword">false</span>
+
+    <span class="keyword">func</span> <span class="func">getOrders</span>(userId: <span class="type">String</span>) <span class="keyword">async throws</span> -> [<span class="type">Order</span>] {
+        <span class="keyword">if</span> shouldThrowError { <span class="keyword">throw</span> <span class="type">TestError</span>.mock }
+        <span class="keyword">return</span> stubbedOrders
+    }
+}
+
+<span class="keyword">func</span> <span class="func">testLoadOrdersSuccess</span>() <span class="keyword">async</span> {
+    <span class="keyword">let</span> mockRepo = <span class="type">MockOrderRepository</span>()
+    mockRepo.stubbedOrders = [<span class="type">Order</span>.sample]
+    <span class="keyword">let</span> viewModel = <span class="type">OrderListViewModel</span>(
+        fetchOrdersUseCase: <span class="type">FetchOrdersUseCaseImpl</span>(repository: mockRepo)
+    )
+
+    <span class="keyword">await</span> viewModel.<span class="func">loadOrders</span>()
+
+    <span class="func">XCTAssertEqual</span>(viewModel.orders.count, <span class="string">1</span>)
+    <span class="func">XCTAssertFalse</span>(viewModel.isLoading)
+    <span class="func">XCTAssertNil</span>(viewModel.error)
+}</code></pre>
+
+        <h2>Results</h2>
+        <p>After completing the migration across all major modules, the impact was measurable:</p>
+        <ul>
+          <li><strong>PR turnaround time dropped by 40%</strong> - Smaller, focused files meant faster reviews and fewer conflicts.</li>
+          <li><strong>Test coverage increased significantly</strong> - Protocol-based DI made it straightforward to write meaningful unit tests.</li>
+          <li><strong>New feature development sped up</strong> - Clear patterns meant engineers could scaffold new features quickly and consistently.</li>
+          <li><strong>Onboarding time reduced</strong> - New team members could understand the codebase faster thanks to consistent, well-defined layers.</li>
+        </ul>
+
+        <h2>Key Takeaways</h2>
+        <blockquote>
+          <p>The best architecture migration is the one your team can execute incrementally without disrupting your users.</p>
+        </blockquote>
+
+        <ol>
+          <li><strong>Don't rewrite everything at once.</strong> Incremental migration reduces risk and lets you learn as you go.</li>
+          <li><strong>Protocols are your best friend.</strong> They enable DI, testability, and the ability to swap implementations seamlessly.</li>
+          <li><strong>Invest in the DI container early.</strong> A solid DI setup makes everything else easier.</li>
+          <li><strong>Let the team practice on new features first.</strong> Building muscle memory with the new patterns before touching legacy code avoids costly mistakes.</li>
+          <li><strong>Measure the impact.</strong> Track metrics like PR review time, crash rates, and test coverage to validate that the migration is delivering value.</li>
+        </ol>
+
+        <p>Architecture decisions should always be driven by the real problems your team faces, not by trends. For us, MVVM + Clean Architecture with DI solved our specific scaling challenges and set us up for the next phase of growth.</p>
+
+        <!-- Navigation -->
+        <div class="blog-post-nav">
+          <a href="../blog.html">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to all posts
+          </a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Vishal Gandhi. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 10);
+    });
+    const navToggle = document.getElementById('nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+    navToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+      const spans = navToggle.querySelectorAll('span');
+      if (navLinks.classList.contains('open')) {
+        spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+        spans[1].style.opacity = '0';
+        spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+      } else {
+        spans[0].style.transform = '';
+        spans[1].style.opacity = '';
+        spans[2].style.transform = '';
+      }
+    });
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('open');
+        const spans = navToggle.querySelectorAll('span');
+        spans[0].style.transform = '';
+        spans[1].style.opacity = '';
+        spans[2].style.transform = '';
+      });
+    });
+  </script>
+</body>
+</html>

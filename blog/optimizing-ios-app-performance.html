@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Optimizing iOS App Performance: Reducing Crashes by 35% and Improving Startup Time - Vishal Gandhi</title>
+  <meta name="description" content="Practical techniques for optimizing iOS app performance, including crash reduction, startup time improvement, and memory management in large-scale apps.">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .blog-post { padding: 120px 0 96px; }
+    .blog-post-header { margin-bottom: 48px; }
+    .blog-post-date { font-size: 0.85rem; color: var(--color-text-light); font-weight: 500; margin-bottom: 12px; }
+    .blog-post-header h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.2; margin-bottom: 16px; }
+    .blog-post-subtitle { font-size: 1.15rem; color: var(--color-text-light); line-height: 1.7; }
+    .blog-post-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+    .blog-post-body { max-width: 720px; }
+    .blog-post-body h2 { font-size: 1.5rem; font-weight: 700; margin: 48px 0 16px; }
+    .blog-post-body h3 { font-size: 1.2rem; font-weight: 700; margin: 32px 0 12px; }
+    .blog-post-body p { font-size: 1.05rem; color: var(--color-text-light); line-height: 1.8; margin-bottom: 16px; }
+    .blog-post-body ul, .blog-post-body ol { padding-left: 24px; margin-bottom: 16px; }
+    .blog-post-body li { font-size: 1.05rem; color: var(--color-text-light); line-height: 1.8; margin-bottom: 8px; }
+    .blog-post-body code { font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; font-size: 0.9em; background: var(--color-bg-alt); border: 1px solid var(--color-border); padding: 2px 6px; border-radius: 4px; }
+    .blog-post-body pre { background: #1e293b; color: #e2e8f0; border-radius: 12px; padding: 24px; overflow-x: auto; margin-bottom: 24px; line-height: 1.6; }
+    .blog-post-body pre code { background: none; border: none; padding: 0; color: inherit; font-size: 0.9rem; }
+    .blog-post-body blockquote { border-left: 3px solid var(--color-primary); padding: 16px 24px; margin: 24px 0; background: var(--color-bg-alt); border-radius: 0 8px 8px 0; }
+    .blog-post-body blockquote p { margin-bottom: 0; font-style: italic; }
+    .blog-post-body strong { color: var(--color-text); font-weight: 600; }
+    .blog-post-nav { margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--color-border); }
+    .blog-post-nav a { display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem; font-weight: 600; color: var(--color-primary); transition: gap 0.2s ease; }
+    .blog-post-nav a:hover { gap: 12px; }
+    .keyword { color: #c084fc; } .type { color: #67e8f9; } .string { color: #86efac; } .comment { color: #64748b; } .func { color: #fbbf24; }
+    @media (max-width: 768px) { .blog-post-header h1 { font-size: 1.75rem; } .blog-post { padding: 100px 0 64px; } }
+  </style>
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo">VG</a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#skills">Skills</a></li>
+        <li><a href="../index.html#experience">Experience</a></li>
+        <li><a href="../index.html#projects">Projects</a></li>
+        <li><a href="../index.html#contact">Contact</a></li>
+        <li><a href="../blog.html" class="nav-blog-link active">Blog</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <article class="blog-post">
+    <div class="container">
+      <header class="blog-post-header">
+        <p class="blog-post-date">March 5, 2026</p>
+        <h1>Optimizing iOS App Performance: Reducing Crashes by 35% and Improving Startup Time</h1>
+        <p class="blog-post-subtitle">Real-world techniques that helped us dramatically improve stability and speed for a delivery app serving 100K+ daily active users.</p>
+        <div class="blog-post-tags">
+          <span class="tag">iOS</span>
+          <span class="tag">Performance</span>
+          <span class="tag">Swift</span>
+          <span class="tag">Crashlytics</span>
+        </div>
+      </header>
+
+      <div class="blog-post-body">
+        <h2>The Performance Challenge</h2>
+        <p>Performance isn't a feature you build once - it's a discipline. When your app serves 100K+ daily active users across varying network conditions and device generations, every millisecond of startup time and every crash directly impacts user retention and revenue.</p>
+
+        <p>Over the past year, we achieved two significant milestones: a <strong>35% reduction in app crashes</strong> and a <strong>30% improvement in startup time</strong>. Here's exactly how we did it.</p>
+
+        <h2>Part 1: Crash Reduction</h2>
+
+        <h3>Setting Up Proactive Monitoring</h3>
+        <p>Before fixing crashes, you need visibility. We set up a multi-layered monitoring approach using Crashlytics, Sentry, and Datadog to capture not just crash reports but the full context leading up to each crash.</p>
+
+        <p>The key was categorizing crashes by impact. Not all crashes are equal - a crash during checkout is far more damaging than one in a rarely-used settings screen. We prioritized by:</p>
+        <ul>
+          <li><strong>Frequency</strong> - How many users are affected</li>
+          <li><strong>Business impact</strong> - Where in the user journey the crash occurs</li>
+          <li><strong>Reproducibility</strong> - Can we consistently trigger it</li>
+        </ul>
+
+        <h3>The Top Crash Culprits</h3>
+        <p>After analyzing our crash data, three categories accounted for nearly 70% of all crashes:</p>
+
+        <p><strong>1. Force Unwrapping Optionals</strong></p>
+        <p>This was our biggest offender. Legacy code was littered with <code>!</code> operators on values that could legitimately be nil, especially when dealing with API responses.</p>
+
+<pre><code><span class="comment">// Before: Crash waiting to happen</span>
+<span class="keyword">let</span> userName = response.user!.name!
+<span class="keyword">let</span> orderId = order.id!
+
+<span class="comment">// After: Safe unwrapping with meaningful fallbacks</span>
+<span class="keyword">guard let</span> user = response.user,
+      <span class="keyword">let</span> name = user.name <span class="keyword">else</span> {
+    Logger.<span class="func">warning</span>(<span class="string">"Missing user data in response"</span>)
+    <span class="keyword">return</span>
+}
+
+<span class="comment">// Or using nil-coalescing where appropriate</span>
+<span class="keyword">let</span> displayName = response.user?.name ?? <span class="string">"Guest"</span></code></pre>
+
+        <p>We created a lint rule to flag any new force unwraps in PRs and gradually eliminated existing ones module by module.</p>
+
+        <p><strong>2. Memory-Related Crashes</strong></p>
+        <p>Memory leaks were silently building up pressure until the OS terminated the app. The most common pattern was retain cycles in closures.</p>
+
+<pre><code><span class="comment">// Before: Retain cycle - self is strongly captured</span>
+orderService.<span class="func">fetchOrders</span> { result <span class="keyword">in</span>
+    <span class="keyword">self</span>.orders = result
+    <span class="keyword">self</span>.tableView.<span class="func">reloadData</span>()
+}
+
+<span class="comment">// After: Weak capture to prevent retain cycle</span>
+orderService.<span class="func">fetchOrders</span> { [<span class="keyword">weak self</span>] result <span class="keyword">in</span>
+    <span class="keyword">guard let self else</span> { <span class="keyword">return</span> }
+    <span class="keyword">self</span>.orders = result
+    <span class="keyword">self</span>.tableView.<span class="func">reloadData</span>()
+}</code></pre>
+
+        <p>We used Instruments' Leaks and Allocations tools to identify the worst offenders, then systematically fixed them. Adding memory monitoring in our debug builds helped catch new leaks early.</p>
+
+        <p><strong>3. Threading Issues</strong></p>
+        <p>UI updates happening on background threads and concurrent access to shared mutable state were causing intermittent crashes that were hard to reproduce.</p>
+
+<pre><code><span class="comment">// Ensuring UI updates happen on the main thread</span>
+<span class="keyword">func</span> <span class="func">updateUI</span>(with data: <span class="type">OrderData</span>) {
+    <span class="type">DispatchQueue</span>.main.<span class="func">async</span> { [<span class="keyword">weak self</span>] <span class="keyword">in</span>
+        <span class="keyword">self</span>?.titleLabel.text = data.title
+        <span class="keyword">self</span>?.statusView.<span class="func">configure</span>(with: data.status)
+    }
+}
+
+<span class="comment">// Using actors for thread-safe state (Swift 5.5+)</span>
+<span class="keyword">actor</span> <span class="type">OrderCache</span> {
+    <span class="keyword">private var</span> cache: [<span class="type">String</span>: <span class="type">Order</span>] = [:]
+
+    <span class="keyword">func</span> <span class="func">store</span>(_ order: <span class="type">Order</span>) {
+        cache[order.id] = order
+    }
+
+    <span class="keyword">func</span> <span class="func">get</span>(_ id: <span class="type">String</span>) -> <span class="type">Order</span>? {
+        cache[id]
+    }
+}</code></pre>
+
+        <h2>Part 2: Startup Time Optimization</h2>
+        <p>App launch time is one of the first impressions users get. Research consistently shows that users abandon apps that take too long to load. Our goal was to get to interactive content as fast as possible.</p>
+
+        <h3>Measuring Before Optimizing</h3>
+        <p>We instrumented our launch sequence to measure each phase: pre-main time, app delegate initialization, first screen render, and time to interactive content.</p>
+
+<pre><code><span class="keyword">final class</span> <span class="type">LaunchProfiler</span> {
+    <span class="keyword">static let</span> shared = <span class="type">LaunchProfiler</span>()
+    <span class="keyword">private var</span> timestamps: [<span class="type">String</span>: <span class="type">CFAbsoluteTime</span>] = [:]
+
+    <span class="keyword">func</span> <span class="func">mark</span>(_ milestone: <span class="type">String</span>) {
+        timestamps[milestone] = <span class="type">CFAbsoluteTimeGetCurrent</span>()
+    }
+
+    <span class="keyword">func</span> <span class="func">report</span>() {
+        <span class="keyword">guard let</span> start = timestamps[<span class="string">"app_start"</span>],
+              <span class="keyword">let</span> interactive = timestamps[<span class="string">"interactive"</span>] <span class="keyword">else</span> { <span class="keyword">return</span> }
+        <span class="keyword">let</span> total = interactive - start
+        Logger.<span class="func">info</span>(<span class="string">"Launch to interactive: \(total)s"</span>)
+    }
+}</code></pre>
+
+        <h3>Lazy Loading</h3>
+        <p>The biggest win came from deferring non-essential initialization. Not everything needs to be ready at launch. We identified services that could be initialized on first use rather than at startup.</p>
+
+<pre><code><span class="comment">// Before: Everything initialized eagerly at launch</span>
+<span class="keyword">class</span> <span class="type">AppDelegate</span> {
+    <span class="keyword">let</span> analytics = <span class="type">AnalyticsService</span>()
+    <span class="keyword">let</span> locationManager = <span class="type">LocationManager</span>()
+    <span class="keyword">let</span> chatService = <span class="type">ChatService</span>()
+    <span class="keyword">let</span> notificationHandler = <span class="type">NotificationHandler</span>()
+    <span class="comment">// ... 10+ more services</span>
+}
+
+<span class="comment">// After: Lazy initialization - load only when needed</span>
+<span class="keyword">class</span> <span class="type">AppDelegate</span> {
+    <span class="keyword">lazy var</span> chatService = <span class="type">ChatService</span>()
+    <span class="keyword">lazy var</span> notificationHandler = <span class="type">NotificationHandler</span>()
+
+    <span class="keyword">func</span> <span class="func">applicationDidFinishLaunching</span>() {
+        <span class="comment">// Only initialize critical-path services</span>
+        <span class="type">AnalyticsService</span>.<span class="func">initialize</span>()
+        <span class="type">LocationManager</span>.shared.<span class="func">startIfAuthorized</span>()
+    }
+}</code></pre>
+
+        <h3>Image Optimization</h3>
+        <p>Large images in the initial screens were adding significant time. We implemented progressive loading and ensured images were properly sized for the device.</p>
+
+        <h3>Reducing Dynamic Library Load Time</h3>
+        <p>Each dynamic framework adds to pre-main time. We audited our dependencies and merged several small frameworks into a single module, reducing the number of dynamic libraries the system needed to load at launch.</p>
+
+        <h2>Results and Monitoring</h2>
+        <p>After implementing these changes over several release cycles:</p>
+        <ul>
+          <li><strong>Crash-free rate improved from ~96% to ~98.5%</strong> - That 2.5% difference represents thousands of users who now have a stable experience.</li>
+          <li><strong>Startup time reduced by 30%</strong> - Users reach interactive content noticeably faster.</li>
+          <li><strong>Memory footprint reduced</strong> - Lower memory usage means fewer OOM terminations, especially on older devices.</li>
+        </ul>
+
+        <blockquote>
+          <p>Performance optimization is not a one-time project. Build monitoring into your workflow, set performance budgets, and treat regressions as seriously as you would broken features.</p>
+        </blockquote>
+
+        <h2>Key Takeaways</h2>
+        <ol>
+          <li><strong>Measure first, optimize second.</strong> Without baseline measurements, you can't prove improvements.</li>
+          <li><strong>Fix crashes by category, not individually.</strong> Eliminating patterns (like force unwraps) fixes whole classes of crashes at once.</li>
+          <li><strong>Lazy load everything that isn't critical path.</strong> The fastest code is code that doesn't run at startup.</li>
+          <li><strong>Make performance visible.</strong> Add monitoring dashboards that the whole team can see. When performance is visible, the team naturally protects it.</li>
+          <li><strong>Test on real devices.</strong> Simulators don't reflect real-world performance. Always validate on the oldest supported device.</li>
+        </ol>
+
+        <div class="blog-post-nav">
+          <a href="../blog.html">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to all posts
+          </a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Vishal Gandhi. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 10); });
+    const navToggle = document.getElementById('nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+    navToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+      const spans = navToggle.querySelectorAll('span');
+      if (navLinks.classList.contains('open')) { spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)'; spans[1].style.opacity = '0'; spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)'; }
+      else { spans[0].style.transform = ''; spans[1].style.opacity = ''; spans[2].style.transform = ''; }
+    });
+    navLinks.querySelectorAll('a').forEach(link => { link.addEventListener('click', () => { navLinks.classList.remove('open'); const spans = navToggle.querySelectorAll('span'); spans[0].style.transform = ''; spans[1].style.opacity = ''; spans[2].style.transform = ''; }); });
+  </script>
+</body>
+</html>

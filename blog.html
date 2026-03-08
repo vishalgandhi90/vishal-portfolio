@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog - Vishal Gandhi</title>
+  <meta name="description" content="Blog posts by Vishal Gandhi on iOS development, Swift, architecture, and mobile engineering.">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .blog-hero {
+      padding: 120px 0 48px;
+    }
+    .blog-hero h1 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .blog-hero p {
+      font-size: 1.1rem;
+      color: var(--color-text-light);
+      max-width: 560px;
+    }
+    .blog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 24px;
+      padding-bottom: 96px;
+    }
+    .blog-card {
+      background: var(--color-card);
+      border: 1px solid var(--color-border);
+      border-radius: 12px;
+      padding: 32px;
+      transition: all 0.2s ease;
+    }
+    .blog-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+    .blog-card-date {
+      font-size: 0.8rem;
+      color: var(--color-text-light);
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    .blog-card h2 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+    .blog-card p {
+      font-size: 0.9rem;
+      color: var(--color-text-light);
+      line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .blog-card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .blog-empty {
+      text-align: center;
+      padding: 64px 0 96px;
+    }
+    .blog-empty-icon {
+      color: var(--color-text-light);
+      margin-bottom: 24px;
+      opacity: 0.4;
+    }
+    .blog-empty h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    .blog-empty p {
+      font-size: 1rem;
+      color: var(--color-text-light);
+      max-width: 400px;
+      margin: 0 auto;
+    }
+    @media (max-width: 768px) {
+      .blog-hero h1 { font-size: 2rem; }
+      .blog-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="nav" id="nav">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">VG</a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="index.html#skills">Skills</a></li>
+        <li><a href="index.html#experience">Experience</a></li>
+        <li><a href="index.html#projects">Projects</a></li>
+        <li><a href="index.html#contact">Contact</a></li>
+        <li><a href="blog.html" class="nav-blog-link active">Blog</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Blog Header -->
+  <section class="blog-hero">
+    <div class="container">
+      <h1>Blog</h1>
+      <p>Thoughts on iOS development, Swift, architecture patterns, and building great mobile apps.</p>
+    </div>
+  </section>
+
+  <!-- Blog Posts -->
+  <section>
+    <div class="container">
+      <div class="blog-grid">
+
+        <a href="blog/mvvm-clean-architecture-ios.html" class="blog-card">
+          <p class="blog-card-date">March 8, 2026</p>
+          <h2>Migrating from MVP to MVVM + Clean Architecture in iOS</h2>
+          <p>A practical guide based on migrating a large-scale delivery app with 10M+ downloads, covering the why, the how, and the lessons learned along the way.</p>
+          <div class="blog-card-tags">
+            <span class="tag">Swift</span>
+            <span class="tag">MVVM</span>
+            <span class="tag">Clean Architecture</span>
+            <span class="tag">iOS</span>
+          </div>
+        </a>
+
+        <a href="blog/optimizing-ios-app-performance.html" class="blog-card">
+          <p class="blog-card-date">March 5, 2026</p>
+          <h2>Optimizing iOS App Performance: Reducing Crashes by 35% and Improving Startup Time</h2>
+          <p>Real-world techniques that helped us dramatically improve stability and speed for a delivery app serving 100K+ daily active users.</p>
+          <div class="blog-card-tags">
+            <span class="tag">iOS</span>
+            <span class="tag">Performance</span>
+            <span class="tag">Swift</span>
+            <span class="tag">Crashlytics</span>
+          </div>
+        </a>
+
+        <a href="blog/cicd-ios-github-actions.html" class="blog-card">
+          <p class="blog-card-date">February 25, 2026</p>
+          <h2>Setting Up CI/CD for iOS with GitHub Actions</h2>
+          <p>How we built a CI/CD pipeline that boosted our feature release frequency by 40%, from pull request validation to automated App Store deployment.</p>
+          <div class="blog-card-tags">
+            <span class="tag">CI/CD</span>
+            <span class="tag">GitHub Actions</span>
+            <span class="tag">Fastlane</span>
+            <span class="tag">iOS</span>
+          </div>
+        </a>
+
+        <a href="blog/payment-gateway-integration-ios.html" class="blog-card">
+          <p class="blog-card-date">February 15, 2026</p>
+          <h2>Payment Gateway Integration in iOS: A Practical Guide</h2>
+          <p>Lessons from integrating HyperPay, STC Pay, Tabby, and Tamara into a delivery platform, and the architecture that made it manageable.</p>
+          <div class="blog-card-tags">
+            <span class="tag">iOS</span>
+            <span class="tag">Payments</span>
+            <span class="tag">Swift</span>
+            <span class="tag">Architecture</span>
+          </div>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Vishal Gandhi. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Navigation scroll shadow
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 10);
+    });
+
+    // Mobile navigation toggle
+    const navToggle = document.getElementById('nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+    navToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+      const spans = navToggle.querySelectorAll('span');
+      if (navLinks.classList.contains('open')) {
+        spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)';
+        spans[1].style.opacity = '0';
+        spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)';
+      } else {
+        spans[0].style.transform = '';
+        spans[1].style.opacity = '';
+        spans[2].style.transform = '';
+      }
+    });
+    navLinks.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('open');
+        const spans = navToggle.querySelectorAll('span');
+        spans[0].style.transform = '';
+        spans[1].style.opacity = '';
+        spans[2].style.transform = '';
+      });
+    });
+  </script>
+</body>
+</html>

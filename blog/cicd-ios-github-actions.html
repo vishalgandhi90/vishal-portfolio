@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Setting Up CI/CD for iOS with GitHub Actions - Vishal Gandhi</title>
+  <meta name="description" content="A step-by-step guide to building a robust CI/CD pipeline for iOS apps using GitHub Actions, from automated testing to App Store deployment.">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .blog-post { padding: 120px 0 96px; }
+    .blog-post-header { margin-bottom: 48px; }
+    .blog-post-date { font-size: 0.85rem; color: var(--color-text-light); font-weight: 500; margin-bottom: 12px; }
+    .blog-post-header h1 { font-size: 2.5rem; font-weight: 800; line-height: 1.2; margin-bottom: 16px; }
+    .blog-post-subtitle { font-size: 1.15rem; color: var(--color-text-light); line-height: 1.7; }
+    .blog-post-tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 20px; }
+    .blog-post-body { max-width: 720px; }
+    .blog-post-body h2 { font-size: 1.5rem; font-weight: 700; margin: 48px 0 16px; }
+    .blog-post-body h3 { font-size: 1.2rem; font-weight: 700; margin: 32px 0 12px; }
+    .blog-post-body p { font-size: 1.05rem; color: var(--color-text-light); line-height: 1.8; margin-bottom: 16px; }
+    .blog-post-body ul, .blog-post-body ol { padding-left: 24px; margin-bottom: 16px; }
+    .blog-post-body li { font-size: 1.05rem; color: var(--color-text-light); line-height: 1.8; margin-bottom: 8px; }
+    .blog-post-body code { font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; font-size: 0.9em; background: var(--color-bg-alt); border: 1px solid var(--color-border); padding: 2px 6px; border-radius: 4px; }
+    .blog-post-body pre { background: #1e293b; color: #e2e8f0; border-radius: 12px; padding: 24px; overflow-x: auto; margin-bottom: 24px; line-height: 1.6; }
+    .blog-post-body pre code { background: none; border: none; padding: 0; color: inherit; font-size: 0.9rem; }
+    .blog-post-body blockquote { border-left: 3px solid var(--color-primary); padding: 16px 24px; margin: 24px 0; background: var(--color-bg-alt); border-radius: 0 8px 8px 0; }
+    .blog-post-body blockquote p { margin-bottom: 0; font-style: italic; }
+    .blog-post-body strong { color: var(--color-text); font-weight: 600; }
+    .blog-post-nav { margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--color-border); }
+    .blog-post-nav a { display: inline-flex; align-items: center; gap: 8px; font-size: 0.95rem; font-weight: 600; color: var(--color-primary); transition: gap 0.2s ease; }
+    .blog-post-nav a:hover { gap: 12px; }
+    .keyword { color: #c084fc; } .type { color: #67e8f9; } .string { color: #86efac; } .comment { color: #64748b; } .func { color: #fbbf24; }
+    @media (max-width: 768px) { .blog-post-header h1 { font-size: 1.75rem; } .blog-post { padding: 100px 0 64px; } }
+  </style>
+</head>
+<body>
+
+  <nav class="nav" id="nav">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo">VG</a>
+      <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="../index.html#about">About</a></li>
+        <li><a href="../index.html#skills">Skills</a></li>
+        <li><a href="../index.html#experience">Experience</a></li>
+        <li><a href="../index.html#projects">Projects</a></li>
+        <li><a href="../index.html#contact">Contact</a></li>
+        <li><a href="../blog.html" class="nav-blog-link active">Blog</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <article class="blog-post">
+    <div class="container">
+      <header class="blog-post-header">
+        <p class="blog-post-date">February 25, 2026</p>
+        <h1>Setting Up CI/CD for iOS with GitHub Actions</h1>
+        <p class="blog-post-subtitle">How we built a CI/CD pipeline that boosted our feature release frequency by 40%, from pull request validation to automated App Store deployment.</p>
+        <div class="blog-post-tags">
+          <span class="tag">CI/CD</span>
+          <span class="tag">GitHub Actions</span>
+          <span class="tag">Fastlane</span>
+          <span class="tag">iOS</span>
+        </div>
+      </header>
+
+      <div class="blog-post-body">
+        <h2>Why CI/CD Matters for Mobile</h2>
+        <p>Mobile app releases have a unique challenge: you can't just deploy a fix to production in minutes like you would with a web app. Every release goes through App Store review, which means bugs that slip through can take days to reach users as a fix. A solid CI/CD pipeline is your safety net.</p>
+
+        <p>Before we set up proper automation, our release process was painful. Manual builds, manual testing checklists, manual code signing headaches. A single release could take an entire day of an engineer's time. After implementing our pipeline, that dropped to a single button press.</p>
+
+        <h2>The Pipeline Architecture</h2>
+        <p>Our CI/CD pipeline has three main stages, each triggered by different events:</p>
+        <ul>
+          <li><strong>PR Validation</strong> - Runs on every pull request to catch issues early</li>
+          <li><strong>Nightly Builds</strong> - Scheduled builds that run the full test suite and produce TestFlight builds</li>
+          <li><strong>Release Pipeline</strong> - Triggered manually or by a tag, handles App Store submission</li>
+        </ul>
+
+        <h3>Stage 1: PR Validation</h3>
+        <p>Every pull request triggers a workflow that builds the project, runs unit tests, and performs static analysis. This gives reviewers confidence that the code compiles and passes tests before they even start reviewing.</p>
+
+<pre><code><span class="comment"># .github/workflows/pr-validation.yml</span>
+<span class="keyword">name</span>: PR Validation
+<span class="keyword">on</span>:
+  <span class="type">pull_request</span>:
+    <span class="keyword">branches</span>: [develop, main]
+
+<span class="keyword">jobs</span>:
+  <span class="type">build-and-test</span>:
+    <span class="keyword">runs-on</span>: macos-14
+    <span class="keyword">steps</span>:
+      - <span class="keyword">uses</span>: actions/checkout@v4
+
+      - <span class="keyword">name</span>: <span class="string">Select Xcode version</span>
+        <span class="keyword">run</span>: sudo xcode-select -s /Applications/Xcode_15.2.app
+
+      - <span class="keyword">name</span>: <span class="string">Cache SPM packages</span>
+        <span class="keyword">uses</span>: actions/cache@v4
+        <span class="keyword">with</span>:
+          <span class="keyword">path</span>: .build
+          <span class="keyword">key</span>: ${{ runner.os }}-spm-${{ hashFiles('**/Package.resolved') }}
+
+      - <span class="keyword">name</span>: <span class="string">Build</span>
+        <span class="keyword">run</span>: |
+          xcodebuild build-for-testing \
+            -scheme MyApp \
+            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            -skipPackagePluginValidation
+
+      - <span class="keyword">name</span>: <span class="string">Run unit tests</span>
+        <span class="keyword">run</span>: |
+          xcodebuild test \
+            -scheme MyApp \
+            -destination 'platform=iOS Simulator,name=iPhone 15' \
+            -resultBundlePath TestResults.xcresult
+
+      - <span class="keyword">name</span>: <span class="string">Upload test results</span>
+        <span class="keyword">if</span>: always()
+        <span class="keyword">uses</span>: actions/upload-artifact@v4
+        <span class="keyword">with</span>:
+          <span class="keyword">name</span>: test-results
+          <span class="keyword">path</span>: TestResults.xcresult</code></pre>
+
+        <h3>Stage 2: Code Signing with Fastlane Match</h3>
+        <p>Code signing is historically the most painful part of iOS CI/CD. We use Fastlane Match to manage certificates and provisioning profiles in a private Git repository, which all CI machines can access.</p>
+
+<pre><code><span class="comment"># Fastfile</span>
+<span class="keyword">platform</span> :ios <span class="keyword">do</span>
+  <span class="keyword">lane</span> <span class="type">:sync_certificates</span> <span class="keyword">do</span>
+    <span class="func">match</span>(
+      <span class="keyword">type</span>: <span class="string">"appstore"</span>,
+      <span class="keyword">app_identifier</span>: <span class="string">"com.company.app"</span>,
+      <span class="keyword">readonly</span>: <span class="keyword">true</span>,
+      <span class="keyword">git_url</span>: <span class="string">"https://github.com/org/certificates.git"</span>
+    )
+  <span class="keyword">end</span>
+
+  <span class="keyword">lane</span> <span class="type">:build_for_testflight</span> <span class="keyword">do</span>
+    <span class="func">sync_certificates</span>
+    <span class="func">increment_build_number</span>(
+      <span class="keyword">build_number</span>: <span class="type">ENV</span>[<span class="string">"GITHUB_RUN_NUMBER"</span>]
+    )
+    <span class="func">build_app</span>(
+      <span class="keyword">scheme</span>: <span class="string">"MyApp"</span>,
+      <span class="keyword">export_method</span>: <span class="string">"app-store"</span>,
+      <span class="keyword">output_directory</span>: <span class="string">"./build"</span>
+    )
+  <span class="keyword">end</span>
+<span class="keyword">end</span></code></pre>
+
+        <h3>Stage 3: Automated TestFlight & App Store Deployment</h3>
+        <p>Once a build passes all checks, deploying to TestFlight is a single command. For App Store releases, we use a tag-based trigger that builds, signs, and uploads to App Store Connect.</p>
+
+<pre><code><span class="comment"># .github/workflows/release.yml</span>
+<span class="keyword">name</span>: Release to App Store
+<span class="keyword">on</span>:
+  <span class="type">push</span>:
+    <span class="keyword">tags</span>: ['v*']
+
+<span class="keyword">jobs</span>:
+  <span class="type">release</span>:
+    <span class="keyword">runs-on</span>: macos-14
+    <span class="keyword">steps</span>:
+      - <span class="keyword">uses</span>: actions/checkout@v4
+
+      - <span class="keyword">name</span>: <span class="string">Install Fastlane</span>
+        <span class="keyword">run</span>: bundle install
+
+      - <span class="keyword">name</span>: <span class="string">Build and upload to TestFlight</span>
+        <span class="keyword">env</span>:
+          <span class="type">MATCH_PASSWORD</span>: ${{ secrets.MATCH_PASSWORD }}
+          <span class="type">APP_STORE_CONNECT_API_KEY</span>: ${{ secrets.ASC_API_KEY }}
+        <span class="keyword">run</span>: bundle exec fastlane build_for_testflight
+
+      - <span class="keyword">name</span>: <span class="string">Upload to App Store Connect</span>
+        <span class="keyword">run</span>: bundle exec fastlane upload_to_testflight
+
+      - <span class="keyword">name</span>: <span class="string">Notify team on Slack</span>
+        <span class="keyword">uses</span>: slackapi/slack-github-action@v1
+        <span class="keyword">with</span>:
+          <span class="keyword">payload</span>: |
+            {"text": "New build uploaded to TestFlight: ${{ github.ref_name }}"}</code></pre>
+
+        <h2>Key Optimizations</h2>
+
+        <h3>Caching for Speed</h3>
+        <p>iOS builds are slow. Caching Swift Package Manager dependencies and derived data cut our build times significantly. SPM resolution alone was taking 3-5 minutes on every build before we added caching.</p>
+
+        <h3>Parallel Testing</h3>
+        <p>We split our test suite across multiple simulator instances to run tests in parallel. This reduced our test execution time from 15 minutes to about 5 minutes.</p>
+
+        <h3>Selective Testing</h3>
+        <p>Not every PR needs the full test suite. We implemented path-based filtering so that changes to documentation or non-code files skip the build entirely, and changes to specific modules only run relevant tests.</p>
+
+        <h2>Managing Secrets</h2>
+        <p>Security is critical in CI/CD. We store all sensitive data - API keys, certificates passwords, App Store Connect credentials - as GitHub encrypted secrets. These are never logged and are only available to workflows running on protected branches.</p>
+
+        <blockquote>
+          <p>A good CI/CD pipeline should be invisible to engineers during normal development but invaluable when things go wrong.</p>
+        </blockquote>
+
+        <h2>Results</h2>
+        <ul>
+          <li><strong>Release frequency increased by 40%</strong> - What used to take a full day now takes minutes.</li>
+          <li><strong>Zero manual code signing issues</strong> - Fastlane Match eliminated the "works on my machine" problem entirely.</li>
+          <li><strong>Bugs caught earlier</strong> - Automated testing on every PR catches regressions before they reach the main branch.</li>
+          <li><strong>Team confidence improved</strong> - Engineers ship with confidence knowing the pipeline validates their work.</li>
+        </ul>
+
+        <h2>Tips for Getting Started</h2>
+        <ol>
+          <li><strong>Start simple.</strong> Begin with just building and running tests on PRs. Add complexity incrementally.</li>
+          <li><strong>Solve code signing first.</strong> This is the biggest blocker. Invest time in Fastlane Match setup early.</li>
+          <li><strong>Cache aggressively.</strong> SPM dependencies, derived data, and Ruby gems all benefit from caching.</li>
+          <li><strong>Monitor build times.</strong> Track how long builds take and set alerts for regressions. Slow CI slows down the whole team.</li>
+          <li><strong>Use macOS runners wisely.</strong> They're expensive. Offload non-build tasks (linting, checks) to Linux runners where possible.</li>
+        </ol>
+
+        <div class="blog-post-nav">
+          <a href="../blog.html">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+            Back to all posts
+          </a>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 Vishal Gandhi. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 10); });
+    const navToggle = document.getElementById('nav-toggle');
+    const navLinks = document.getElementById('nav-links');
+    navToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('open');
+      const spans = navToggle.querySelectorAll('span');
+      if (navLinks.classList.contains('open')) { spans[0].style.transform = 'rotate(45deg) translate(5px, 5px)'; spans[1].style.opacity = '0'; spans[2].style.transform = 'rotate(-45deg) translate(5px, -5px)'; }
+      else { spans[0].style.transform = ''; spans[1].style.opacity = ''; spans[2].style.transform = ''; }
+    });
+    navLinks.querySelectorAll('a').forEach(link => { link.addEventListener('click', () => { navLinks.classList.remove('open'); const spans = navToggle.querySelectorAll('span'); spans[0].style.transform = ''; spans[1].style.opacity = ''; spans[2].style.transform = ''; }); });
+  </script>
+</body>
+</html>
