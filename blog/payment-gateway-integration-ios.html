@@ -238,6 +238,9 @@
           <p>The best payment integration is one the user barely notices. It should feel effortless, but behind the scenes, it handles every edge case gracefully.</p>
         </blockquote>
 
+        <h2>Open Source: SwiftPaymentKit</h2>
+        <p>I've extracted the core patterns from this architecture into an open-source library called <a href="https://github.com/vishalgandhi90/SwiftPaymentKit" target="_blank" rel="noopener" style="color: var(--color-primary); font-weight: 600;">SwiftPaymentKit</a>. It provides the <code>PaymentGateway</code> protocol, an actor-based <code>PaymentManager</code> with automatic routing and retry logic, and support for all the payment methods discussed here. Add it via SPM and build your own gateway implementations on top of a battle-tested foundation.</p>
+
         <h2>Key Takeaways</h2>
         <ol>
           <li><strong>Abstract early.</strong> Build a unified payment protocol before integrating your first gateway. Adding subsequent providers becomes much easier.</li>
