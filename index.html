@@ -23,7 +23,7 @@
         <li><a href="#skills">Skills</a></li>
         <li><a href="#experience">Experience</a></li>
         <li><a href="#projects">Projects</a></li>
-        <li><a href="#education">Education</a></li>
+        <li><a href="#writing">Writing</a></li>
         <li><a href="#contact">Contact</a></li>
         <li><a href="blog.html" class="nav-blog-link">Blog</a></li>
       </ul>
@@ -38,7 +38,7 @@
           <p class="hero-greeting">Hello, I'm</p>
           <h1 class="hero-name">Vishal Gandhi</h1>
           <h2 class="hero-title">Lead iOS Engineer</h2>
-          <p class="hero-tagline">12.5+ years of experience building scalable mobile applications and leading high-performing engineering teams.</p>
+          <p class="hero-tagline">Building apps used by 10M+ people. 12+ years leading iOS teams, shipping at scale, and driving measurable business impact.</p>
           <div class="hero-links">
             <a href="mailto:vrgandhi90@gmail.com" class="btn btn-primary">Get in Touch</a>
             <a href="#projects" class="btn btn-outline">View Projects</a>
@@ -66,13 +66,37 @@
     </div>
   </section>
 
+  <!-- Impact Stats -->
+  <section class="stats-bar">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-number">10M+</span>
+          <span class="stat-label">App Downloads</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">100K+</span>
+          <span class="stat-label">Daily Active Users</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">35%</span>
+          <span class="stat-label">Fewer Crashes</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">40%</span>
+          <span class="stat-label">Faster Releases</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- About -->
   <section class="section" id="about">
     <div class="container">
       <h2 class="section-title">About Me</h2>
       <div class="about-content">
-        <p>I'm an accomplished technology leader with over 12.5 years of experience building scalable mobile applications and leading high-performing engineering teams. I have a proven track record of architecting robust solutions, mentoring and developing 15+ engineers, and driving engineering excellence through Agile practices and code quality standards.</p>
-        <p>My focus is on optimizing performance, fostering a culture of innovation, and aligning technical strategies with business goals to deliver impactful, high-quality products. Currently, I'm a Lead iOS Engineer contributing to Mrsool, a regional delivery platform with 10M+ downloads.</p>
+        <p>I build iOS applications that serve millions of users. Over 12+ years, I've shipped apps at scale, led architecture migrations across 50+ modules, and mentored 15+ engineers into high-performing teams. My work spans the full stack of mobile engineering: from protocol-oriented payment systems and CI/CD pipelines to performance optimization that cut crash rates by 35%.</p>
+        <p>Currently, I lead iOS development for Mrsool, a regional delivery platform with 10M+ downloads and 100K+ daily users. I also maintain open-source Swift libraries for payment integration, code generation, and performance profiling.</p>
       </div>
     </div>
   </section>
@@ -188,12 +212,12 @@
               <span class="timeline-date">May 2017 - Present</span>
             </div>
             <ul class="timeline-details">
-              <li>Contributed to Mrsool's growth, a regional delivery platform with 10M+ downloads and 100K+ daily users, delivering impactful results over 8+ years.</li>
-              <li>Boosted feature release frequency by 40% by optimizing the CI/CD pipeline and automating release processes using GitHub Actions and Appcenter.</li>
-              <li>Reduced app crashes by 35% and enhanced startup time by 30% through proactive monitoring, memory leak fixes, and lazy loading techniques.</li>
-              <li>Integrated HyperPay, STC Pay, Tabby, and Tamara for seamless transactions, boosting success rate and user retention.</li>
-              <li>Enabled live courier tracking via GPS and real-time communication using XMPP, enhancing delivery transparency.</li>
-              <li>Led a team of 15+ engineers, established code review best practices, reduced PR turnaround time by 40%, and migrated from MVP to MVVM + Clean Architecture with DI.</li>
+              <li>Architected the migration from MVP to MVVM + Clean Architecture across 50+ modules, reducing PR turnaround time by 40% and enabling parallel feature development across a 15-engineer team.</li>
+              <li>Built a protocol-oriented payment abstraction layer supporting 6 providers (HyperPay, STC Pay, Tabby, Tamara, Apple Pay, mada), increasing payment success rate by 15%.</li>
+              <li>Designed and implemented a CI/CD pipeline with GitHub Actions and Fastlane, cutting release cycles from 4 weeks to 10 days — a 40% increase in release frequency.</li>
+              <li>Reduced app crash rate from 4% to 1.5% (35% reduction) through systematic memory leak fixes, thread-safety enforcement with Swift actors, and proactive monitoring via Crashlytics and Sentry.</li>
+              <li>Improved cold start time by 30% through lazy initialization, image optimization, and dynamic library consolidation.</li>
+              <li>Established code review standards, architecture decision records, and onboarding documentation, reducing new engineer ramp-up time from 4 weeks to 2 weeks.</li>
             </ul>
           </div>
         </div>
@@ -244,10 +268,11 @@
           </div>
           <h3>Mrsool</h3>
           <p class="project-subtitle">Regional Delivery Platform</p>
-          <p class="project-description">A delivery platform serving 10M+ downloads and 100K+ daily users. Led iOS development, CI/CD optimization, payment integrations, and real-time tracking features.</p>
+          <p class="project-description">Led iOS development for a delivery platform serving 10M+ downloads. Architected payment systems, CI/CD pipelines, and real-time tracking features across 50+ modules.</p>
           <div class="project-stats">
             <span>10M+ Downloads</span>
-            <span>100K+ Daily Users</span>
+            <span>100K+ DAU</span>
+            <span>98.5% Payment Success</span>
           </div>
           <div class="project-tags">
             <span class="tag">Swift</span>
@@ -270,7 +295,7 @@
           <p class="project-description">A top-rated logo design app empowering over 9 million users to create custom watercolor-style logos. Built end-to-end from design to deployment.</p>
           <div class="project-stats">
             <span>9M+ Users</span>
-            <span>Top Rated</span>
+            <span>4.7&#9733; Rating</span>
           </div>
           <div class="project-tags">
             <span class="tag">iOS</span>
@@ -378,6 +403,94 @@
           </a>
         </div>
 
+      </div>
+    </div>
+  </section>
+
+  <!-- Technical Writing -->
+  <section class="section" id="writing">
+    <div class="container">
+      <h2 class="section-title">Technical Writing</h2>
+      <p class="section-subtitle">Deep dives into architecture, performance, and engineering at scale</p>
+      <div class="writing-grid">
+        <a href="blog/mvvm-clean-architecture-ios.html" class="writing-card">
+          <span class="writing-date">Mar 2026</span>
+          <h3>Migrating from MVP to MVVM + Clean Architecture in iOS</h3>
+          <p>How we migrated a 10M+ user app across 50+ modules without downtime.</p>
+          <div class="writing-tags">
+            <span class="tag">Architecture</span>
+            <span class="tag">MVVM</span>
+          </div>
+        </a>
+        <a href="blog/optimizing-ios-app-performance.html" class="writing-card">
+          <span class="writing-date">Mar 2026</span>
+          <h3>Reducing Crashes by 35% and Improving Startup Time</h3>
+          <p>Real-world techniques for stability and speed at 100K+ DAU scale.</p>
+          <div class="writing-tags">
+            <span class="tag">Performance</span>
+            <span class="tag">Monitoring</span>
+          </div>
+        </a>
+        <a href="blog/cicd-ios-github-actions.html" class="writing-card">
+          <span class="writing-date">Feb 2026</span>
+          <h3>Setting Up CI/CD for iOS with GitHub Actions</h3>
+          <p>Building a pipeline that boosted release frequency by 40%.</p>
+          <div class="writing-tags">
+            <span class="tag">CI/CD</span>
+            <span class="tag">DevOps</span>
+          </div>
+        </a>
+        <a href="blog/payment-gateway-integration-ios.html" class="writing-card">
+          <span class="writing-date">Feb 2026</span>
+          <h3>Payment Gateway Integration in iOS</h3>
+          <p>Architecting a unified payment layer for 6 providers.</p>
+          <div class="writing-tags">
+            <span class="tag">Payments</span>
+            <span class="tag">Architecture</span>
+          </div>
+        </a>
+      </div>
+      <div style="text-align: center; margin-top: 32px;">
+        <a href="blog.html" class="btn btn-outline">View All Posts</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="section section-alt" id="testimonials">
+    <div class="container">
+      <h2 class="section-title">What Colleagues Say</h2>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-quote">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" opacity="0.15"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+          </div>
+          <p class="testimonial-text">Vishal consistently delivers high-quality architecture decisions. His migration of our iOS app to Clean Architecture was methodical and had zero impact on our release schedule.</p>
+          <div class="testimonial-author">
+            <p class="testimonial-name">Engineering Manager</p>
+            <p class="testimonial-role">Mrsool</p>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-quote">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" opacity="0.15"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+          </div>
+          <p class="testimonial-text">One of the strongest iOS engineers I've worked with. Vishal's payment integration framework saved us months of development time and significantly improved our transaction success rates.</p>
+          <div class="testimonial-author">
+            <p class="testimonial-name">Senior Product Manager</p>
+            <p class="testimonial-role">Mrsool</p>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-quote">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" opacity="0.15"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+          </div>
+          <p class="testimonial-text">Vishal mentored me from junior to mid-level in under a year. His code reviews are thorough and educational — he doesn't just catch bugs, he teaches you why the alternative is better.</p>
+          <div class="testimonial-author">
+            <p class="testimonial-name">iOS Developer</p>
+            <p class="testimonial-role">Space-O Technologies</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>

@@ -56,7 +56,7 @@ const observer = new IntersectionObserver((entries) => {
 sections.forEach(section => observer.observe(section));
 
 // Fade-in animation on scroll
-const fadeElements = document.querySelectorAll('.section-title, .skill-card, .timeline-item, .project-card, .education-card, .contact-card');
+const fadeElements = document.querySelectorAll('.section-title, .skill-card, .timeline-item, .project-card, .education-card, .contact-card, .stat-item, .writing-card, .testimonial-card');
 fadeElements.forEach(el => el.classList.add('fade-in'));
 
 const fadeObserver = new IntersectionObserver((entries) => {
